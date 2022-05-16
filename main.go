@@ -7,13 +7,17 @@ import (
 	bipm "github.com/dariolpz/ipm-classification-refactor/builder/ipmmessage"
 	fmguru "github.com/dariolpz/ipm-classification-refactor/factorymethod/guru"
 	fmipm "github.com/dariolpz/ipm-classification-refactor/factorymethod/ipmmessage"
+	sguru "github.com/dariolpz/ipm-classification-refactor/strategy/guru"
+	sipm "github.com/dariolpz/ipm-classification-refactor/strategy/ipmmessage"
 )
 
 func main() {
 	// factoryMethodGuru()
 	// factoryMethodIPMMessage()
-	//builderGuru()
-	builderIPM()
+	// builderGuru()
+	// builderIPM()
+	// strategyGuru()
+	strategyIPMMessage()
 }
 
 func factoryMethodGuru() {
@@ -63,22 +67,65 @@ func builderIPM() {
 	headerBuilder, _ := bipm.GetBuilder(bipm.HeaderBuilderType, &bipm.HeaderData{})
 
 	director := bipm.NewDirector(BRFirstPresentmentBuilder)
-	brFirstPresentment := director.BuildHouse()
+	brFirstPresentment := director.Build()
 	fmt.Printf("IpmMessage Type: %s\n", brFirstPresentment.GetMessageType())
 	brFirstPresentment.PrintIPMMessage()
 
 	director.SetBuilder(ARFirstPresentmentBuilder)
-	arFirstPresentment := director.BuildHouse()
+	arFirstPresentment := director.Build()
 	fmt.Printf("IpmMessage Type: %s\n", arFirstPresentment.GetMessageType())
 	arFirstPresentment.PrintIPMMessage()
 
 	director.SetBuilder(headerBuilder)
-	header := director.BuildHouse()
+	header := director.Build()
 	fmt.Printf("IpmMessage Type: %s\n", header.GetMessageType())
 	header.PrintIPMMessage()
 
 	director.SetBuilder(feeCollectionBuilder)
-	feeCollection := director.BuildHouse()
+	feeCollection := director.Build()
+	fmt.Printf("IpmMessage Type: %s\n", feeCollection.GetMessageType())
+	feeCollection.PrintIPMMessage()
+}
+
+func strategyGuru() {
+	lfu := &sguru.LFU{}
+	cache := sguru.InitCache(lfu)
+
+	cache.Add("a", "1")
+	cache.Add("b", "2")
+
+	cache.Add("c", "3")
+
+	lru := &sguru.LRU{}
+	cache.SetEvictionAlgo(lru)
+
+	cache.Add("d", "4")
+
+	fifo := &sguru.FIFO{}
+	cache.SetEvictionAlgo(fifo)
+
+	cache.Add("e", "5")
+}
+
+func strategyIPMMessage() {
+	BRFPStrategy := sipm.FirstPresentmentBRStrategy{}
+	ARFPStrategy := sipm.FirstPresentmentARStrategy{}
+	feeCollectionStrategy := sipm.FeeCollectionStrategy{}
+	headerStrategy := sipm.HeaderStrategy{}
+
+	brFirstPresentment := sipm.NewIPMMessage(BRFPStrategy)
+	fmt.Printf("IpmMessage Type: %s\n", brFirstPresentment.GetMessageType())
+	brFirstPresentment.PrintIPMMessage()
+
+	arFirstPresentment := sipm.NewIPMMessage(ARFPStrategy)
+	fmt.Printf("IpmMessage Type: %s\n", arFirstPresentment.GetMessageType())
+	arFirstPresentment.PrintIPMMessage()
+
+	header := sipm.NewIPMMessage(headerStrategy)
+	fmt.Printf("IpmMessage Type: %s\n", header.GetMessageType())
+	header.PrintIPMMessage()
+
+	feeCollection := sipm.NewIPMMessage(feeCollectionStrategy)
 	fmt.Printf("IpmMessage Type: %s\n", feeCollection.GetMessageType())
 	feeCollection.PrintIPMMessage()
 }

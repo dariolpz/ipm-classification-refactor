@@ -15,6 +15,6 @@ func (d *director) SetBuilder(b iBuilder) {
 	d.builder = b
 }
 
-func (d *director) BuildHouse() IPMMessage {
+func (d *director) Build() IPMMessage {
 	return d.builder.GetIPMMessage()
 }
