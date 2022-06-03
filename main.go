@@ -15,9 +15,9 @@ func main() {
 	// factoryMethodGuru()
 	// factoryMethodIPMMessage()
 	// builderGuru()
-	// builderIPM()
+	builderIPM()
 	// strategyGuru()
-	strategyIPMMessage()
+	// strategyIPMMessage()
 }
 
 func factoryMethodGuru() {
@@ -61,28 +61,28 @@ func builderGuru() {
 }
 
 func builderIPM() {
-	BRFirstPresentmentBuilder, _ := bipm.GetBuilder(bipm.FirstPresentmentBRBuilderType, &bipm.FirstPresentmentData{})
-	ARFirstPresentmentBuilder, _ := bipm.GetBuilder(bipm.FirstPresentmentARBuilderType, &bipm.FirstPresentmentData{})
-	feeCollectionBuilder, _ := bipm.GetBuilder(bipm.FeeCollectionBuilderType, &bipm.FeeCollectionData{})
-	headerBuilder, _ := bipm.GetBuilder(bipm.HeaderBuilderType, &bipm.HeaderData{})
+	BRFirstPresentmentBuilder, _ := bipm.GetBuilder(bipm.FirstPresentmentBRBuilderType)
+	ARFirstPresentmentBuilder, _ := bipm.GetBuilder(bipm.FirstPresentmentARBuilderType)
+	feeCollectionBuilder, _ := bipm.GetBuilder(bipm.FeeCollectionBuilderType)
+	headerBuilder, _ := bipm.GetBuilder(bipm.HeaderBuilderType)
 
 	director := bipm.NewDirector(BRFirstPresentmentBuilder)
-	brFirstPresentment := director.Build()
+	brFirstPresentment := director.Build(bipm.FirstPresentmentData{})
 	fmt.Printf("IpmMessage Type: %s\n", brFirstPresentment.GetMessageType())
 	brFirstPresentment.PrintIPMMessage()
 
 	director.SetBuilder(ARFirstPresentmentBuilder)
-	arFirstPresentment := director.Build()
+	arFirstPresentment := director.Build(bipm.FirstPresentmentData{})
 	fmt.Printf("IpmMessage Type: %s\n", arFirstPresentment.GetMessageType())
 	arFirstPresentment.PrintIPMMessage()
 
 	director.SetBuilder(headerBuilder)
-	header := director.Build()
+	header := director.Build(bipm.HeaderData{})
 	fmt.Printf("IpmMessage Type: %s\n", header.GetMessageType())
 	header.PrintIPMMessage()
 
 	director.SetBuilder(feeCollectionBuilder)
-	feeCollection := director.Build()
+	feeCollection := director.Build(bipm.FeeCollectionData{})
 	fmt.Printf("IpmMessage Type: %s\n", feeCollection.GetMessageType())
 	feeCollection.PrintIPMMessage()
 }

@@ -15,6 +15,6 @@ func (d *director) SetBuilder(b iBuilder) {
 	d.builder = b
 }
 
-func (d *director) Build() IPMMessage {
-	return d.builder.GetIPMMessage()
+func (d *director) Build(ipmMessageData interface{}) IPMMessage {
+	return d.builder.GetIPMMessage(ipmMessageData)
 }
